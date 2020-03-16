@@ -3,6 +3,7 @@ jobs:
   plan:
   - get: repo
     trigger: true
+    version: every
   - task: release
     config:
       platform: linux
