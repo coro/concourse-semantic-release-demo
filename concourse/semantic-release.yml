@@ -1,0 +1,39 @@
+jobs:
+- name: create-new-release
+  plan:
+  - get: repo
+    trigger: true
+  - task: release
+    config:
+      platform: linux
+      image_resource:
+        type: docker-image
+        source:
+          repository: corodotdev/concourse-semantic-release
+          tag: latest
+      inputs:
+      - name: repo
+      run:
+        path: bash
+        args:
+          - -c
+          - npx -p semantic-release-slack-bot -p semantic-release@17 semantic-release
+        dir: repo
+      params:
+        GH_TOKEN: {{github_token}}
+        SLACK_WEBHOOK: {{slack_webhook}}
+        SEMANTIC_RELEASE_PACKAGE: "semantic-cf-rabbitmq-smoke-tests-release"
+
+resources:
+- name: repo
+  type: git-branch-heads
+  source:
+    uri: {{git_uri}}
+    branches: ["+([0-9])?(.{+([0-9]),x}).x", "master", "dev"]
+    private_key: {{git_private_key}}
+  check_every: 10s
+
+resource_types:
+- name: git-branch-heads
+  type: docker-image
+  source: {repository: vito/git-branch-heads-resource}

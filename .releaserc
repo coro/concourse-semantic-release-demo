@@ -1,0 +1,11 @@
+---
+branches:
+- +([0-9])?(.{+([0-9]),x}).x
+- master
+- {name: 'dev', prerelease: true}
+plugins:
+- @semantic-release/commit-analyzer
+- @semantic-release/release-notes-generator
+- @semantic-release/github
+- [semantic-release-slack-bot, {"notifyOnSuccess": true, "notifyOnFail": true}]
+ci: false # Necessary as Concourse is not recognised as a CI provider...
