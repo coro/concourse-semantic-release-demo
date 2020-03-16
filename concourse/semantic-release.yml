@@ -23,7 +23,7 @@ jobs:
       params:
         GH_TOKEN: {{github_token}}
         SLACK_WEBHOOK: {{slack_webhook}}
-        SEMANTIC_RELEASE_PACKAGE: "semantic-cf-rabbitmq-smoke-tests-release"
+        SEMANTIC_RELEASE_PACKAGE: "concourse-semantic-release-demo"
 
 resources:
 - name: repo
