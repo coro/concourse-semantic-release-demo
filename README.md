@@ -44,7 +44,7 @@ Our poem isn't that great - there's just no metre, or anything, at all! Let's fi
 echo "'Twas brillig, and the slithy toves
 Did gyre and gimble in the wabe:
 All mimsy were the borogoves,
-And the mome raths outgrabe.
+And the mome rats outgrabe.
 " >> poem.txt
 git add poem.txt
 git commit -m "feat(poem): Added first verse"
@@ -66,7 +66,7 @@ git commit -m "feat(poem): Added first verse"
 git push
 ```
 
-And again, we can see our minor version was bumped; this time to 1.2.0.
+And again, we can see our **minor** version was bumped; this time to 1.2.0.
 
 ### Bug fixing
 Oh no! A user reported a bug in our beautiful poem. Our spellchecker must have been left on, because somehow a *real* word ended up in the poem; this dear user is outraged that you dared to misrepresent the Bandersnatch as anything other than **frumious**. Never mind, we'll fix that in a jiffy:
@@ -81,7 +81,7 @@ git push
 This time, we have a **fix** release, resulting in a **patch** version bump to 1.2.1.
 
 ### Breaking changes
-Throw everything to the wind! You've decided that the easiest way to consume poems is line-by-line alphabetically. This unfortunately will break all existing readers who have built up their reading style based on the traditional 'chronological' API for storytelling.
+Throw everything to the wind! You've decided that the easiest way to consume poems is line-by-line alphabetically. This unfortunately will break all existing readers who have built up their reading style based on the traditional 'chronological' API for storytelling. But nonetheless you plough on, knowing that the real future is alphabetical. 
 
 ```bash
 sort poem.txt -o poem.txt
@@ -95,3 +95,40 @@ git push
 As this is a breaking change, the version increase will be a **major** bump, resulting in version 2.0.0.
 
 ### Maintenance branches
+Some of the users have expressed reluctance to migrate to the new world. Namely, their service relies on the existance of verses, which no longer exist in v2. You'd like to continue support for these users, so you can create a maintenance branch to continue providing fixes to the `1.x` release track:
+
+```bash
+git co 1.2.1
+git co -b 1.x
+git push -u origin 1.x
+```
+**N.B.** This maintenance branch can also only provide patch releases if desired, e.g. `1.2.x`
+
+Now, when a bug report comes in pointing out that mome rats sounds far too real to be in this poem, you can easily provide the fix and generate version numbers / release notes appropriately.
+
+```bash
+git co 1.x
+sed -i '' 's/mome rats/mome raths/g' poem.txt # Assuming you're on MacOS...
+git add poem.txt
+git commit -m "fix(poem): mome rats are now mome raths"
+git push
+```
+
+Since 1.x is [configured](https://github.com/coro/concourse-semantic-release-demo/blob/b02598ce135ff4eafbad204cf6437b704dc182c4/.releaserc#L3) as a monitored release branch, this will trigger semantic-release. Even though master is currently sitting on 2.0.0, the newly generated release version will be 1.2.2.
+
+### Pre-release
+What better way to get user feedback on upcoming additional lines in the poem than a pre-release of the poem? Since our branch `dev` is [configured](https://github.com/coro/concourse-semantic-release-demo/blob/b02598ce135ff4eafbad204cf6437b704dc182c4/.releaserc#L5) as a pre-release branch, any pushes to this branch will result in an incrementing pre-release identifier (as per [SemVer spec 2.0.0](https://semver.org/#spec-item-9)) with the same name as the branch.
+
+```bash
+git co master
+git co -b dev
+echo "He took his vorpal sword in hand;
+Long time the manxome foe he sought—
+" >> poem.txt
+sort poem.txt -o poem.txt
+git add poem.txt
+git commit -m "feat(poem): Added two lines of third verse"
+git push
+```
+
+As this is a pre-release, we'll end up with `2.0.0-dev.1`. Subsequent `feat` type commits will increment this number by 1 each time. You'll see this release is also tagged as a pre-release in GitHub.
