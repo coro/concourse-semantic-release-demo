@@ -21,6 +21,7 @@ fly \
   --var github_token="$GITHUB_TOKEN" \
   --var slack_webhook="$SLACK_WEBHOOK_TOKEN"
 ```
+Note: `$GIT_URI` must be the HTTPS Git URI, not the SSH version.
 
 ## Workflow
 We're going to be handling a pretty familiar workflow for a product from creation through development, including following semver, tagging releases in GitHub, creating dev prereleases & announcing releases on Slack. Our 'product' is just a poem, that we'll develop as we go along. 
@@ -107,7 +108,6 @@ git push -u origin 1.x
 Now, when a bug report comes in pointing out that mome rats sounds far too real to be in this poem, you can easily provide the fix and generate version numbers / release notes appropriately.
 
 ```bash
-git co 1.x
 sed -i '' 's/mome rats/mome raths/g' poem.txt # Assuming you're on MacOS...
 git add poem.txt
 git commit -m "fix(poem): mome rats are now mome raths"
@@ -128,7 +128,7 @@ Long time the manxome foe he sought—
 sort poem.txt -o poem.txt
 git add poem.txt
 git commit -m "feat(poem): Added two lines of third verse"
-git push
+git push --set-upstream origin dev
 ```
 
 As this is a pre-release, we'll end up with `2.0.0-dev.1`. Subsequent `feat` type commits will increment this number by 1 each time. You'll see this release is also tagged as a pre-release in GitHub.
